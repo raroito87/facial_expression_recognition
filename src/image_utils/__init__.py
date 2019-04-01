@@ -1,6 +1,8 @@
+from .image_capture import ImageCapture
+from .image_converter import ImageConverter
 from .image_importer import ImageImporter
 from .image_exporter import ImageExporter
-from .image_capture import ImageCapture
 
 
-__all__ = ['ImageImporter', 'ImageExporter', 'ImageCapture']
+__all__ = ['ImageCapture', 'ImageConverter',
+           'ImageImporter', 'ImageExporter']

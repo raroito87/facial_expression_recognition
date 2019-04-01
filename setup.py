@@ -24,7 +24,7 @@ setup(
     license='MIT license',
     description='Neue Fische - Final Project',
     long_description=read('README.md'),
-    author='Matthias Rettenmeier',
+    author='Rafael Rodriguez',
     author_email='raroito@gmail.com',
     url='https://github.com/raroito87/facial_expression_recognition/',
     packages=find_packages('src'),

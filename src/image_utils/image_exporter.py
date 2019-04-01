@@ -1,5 +1,6 @@
 import os
 import datetime
+from .image_converter import ImageConverter
 import cv2
 
 class ImageExporter:
@@ -25,8 +26,21 @@ class ImageExporter:
             os.makedirs(path)
 
         self._save_original(frame, path)
+        self._save_converted(frame, path)
 
     def _save_original(self, frame, path):
         img_name = path + 'original.png'
-        print(img_name)
         cv2.imwrite(img_name, frame)
+
+    def _save_converted(self, frame, path):
+        im_conv = ImageConverter()
+
+        temp_img = im_conv.crop_frame_to_square(im_conv.convert_frame_to_grey_scale(frame))
+
+        img_48 = im_conv.rescale(temp_img, size = 48)
+        img_name = path + 'img_48.png'
+        cv2.imwrite(img_name, img_48)
+
+        img_96 = im_conv.rescale(temp_img, size = 96)
+        img_name = path + 'img_96.png'
+        cv2.imwrite(img_name, img_96)
