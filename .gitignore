@@ -106,3 +106,4 @@ venv.bak/
 #my excludes
 data/
 .idea/
+DS_STORE
