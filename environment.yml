@@ -1,5 +1,5 @@
 # conda env create|update --file environment.yml
-name: data-fish
+name: facial_expression_recognition
 dependencies:
 - python=3.6
 - pip
@@ -18,3 +18,6 @@ dependencies:
   - sklearn
   - graphviz==0.10.*
   - torch
+  - opencv-python
+  - imageio
+  - scikit-image
