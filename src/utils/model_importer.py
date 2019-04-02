@@ -1,8 +1,6 @@
 import os
 import torch
-from models import LogReg, IMDB_NN_Model, Cnn_Digits, AnnDigits, CnnDigits2, CnnDigits4
-import torch.nn as nn
-from torch.optim import Adam
+from models import  CnnSimple
 
 #todo
 #domehow the modul should also be saved and loaded so I dont have to ass here all model classes as import

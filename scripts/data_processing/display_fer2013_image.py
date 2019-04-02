@@ -1,3 +1,7 @@
+import sys
+#print(sys.path)
+sys.path.append("/Users/raroito/PycharmProjects/facial_expression_recognition/src/")
+
 from image_utils import ImageImporter, ImageExporter
 import matplotlib.pyplot as plt
 

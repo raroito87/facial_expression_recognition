@@ -7,7 +7,7 @@ class ModelExporter:
         self.data = {}
 
         root_dir = os.path.dirname(__file__)
-        directory_template = '{root_dir}/../../data/{name}/models/'
+        directory_template = '{root_dir}/../../models/{name}/'
         self.directory = directory_template.format(root_dir=root_dir, name=name)
 
         if not os.path.exists(self.directory):
