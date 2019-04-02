@@ -21,7 +21,7 @@ class ImageConverter:
         return cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     def rescale(self, frame, size = 48):
-        return cv2.resize(frame,(size,size))
+        return cv2.resize(frame,(size,size), interpolation = cv2.INTER_AREA)
 
     def _get_crop_coordinates(self, rows, cols):
         if cols > rows:

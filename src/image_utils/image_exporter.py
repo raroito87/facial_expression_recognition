@@ -28,8 +28,8 @@ class ImageExporter:
         self._save_original(frame, path)
         self._save_converted(frame, path)
 
-    def _save_original(self, frame, path):
-        img_name = path + 'original.png'
+    def _save_original(self, frame, path, name = 'original'):
+        img_name = path + name + '.png'
         cv2.imwrite(img_name, frame)
 
     def _save_converted(self, frame, path):
