@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 
 class ImageConverter:
 
@@ -11,7 +12,6 @@ class ImageConverter:
 
         y1, y2, x1, x2 = self._get_crop_coordinates(rows, cols)
 
-        print('size: ',y1, y2, x1, x2)
         return frame[y1:y2, x1:x2].copy()
 
     def convert_frame_to_grey_scale(self, frame):
@@ -22,6 +22,9 @@ class ImageConverter:
 
     def rescale(self, frame, size = 48):
         return cv2.resize(frame,(size,size), interpolation = cv2.INTER_AREA)
+
+    def reshape_frame_to_array(self, frame):
+        return frame.reshape(1, 48*48)
 
     def _get_crop_coordinates(self, rows, cols):
         if cols > rows:

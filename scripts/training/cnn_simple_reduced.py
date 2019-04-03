@@ -1,3 +1,7 @@
+import sys
+#print(sys.path)
+sys.path.append("/Users/raroito/PycharmProjects/facial_expression_recognition/src/")
+
 from train import TrainClassifier
 from utils import Preprocessing, ModelExporter
 import torch
@@ -8,16 +12,16 @@ import matplotlib.pyplot as plt
 
 if not __name__ == '__main_':
 
-    parser = argparse.ArgumentParser(description='Digits')
+    parser = argparse.ArgumentParser(description='fer2013')
     parser.add_argument('--s_model', default=True, help='save trained model')
 
     args=parser.parse_args()
 
     n_classes = 7
-    n_epochs = 200
+    n_epochs = 100
 
     pre = Preprocessing('fer2013')
-    pre.load_data(filename='train_reduced.csv', name='train')
+    pre.load_data(filename='train_reduced_norm.csv', name='train')
 
     X_df = pre.get(name='train').drop(columns=['emotion'])
     y_df = pre.get(name='train')['emotion']

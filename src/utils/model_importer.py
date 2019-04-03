@@ -1,6 +1,8 @@
 import os
 import torch
-from models import  CnnSimple
+from models import CnnSimple
+import torch.nn as nn
+from torch.optim import Adam
 
 #todo
 #domehow the modul should also be saved and loaded so I dont have to ass here all model classes as import
@@ -10,7 +12,7 @@ class ModelImporter:
         self.data = {}
 
         root_dir = os.path.dirname(__file__)
-        directory_template = '{root_dir}/../../data/{name}/models/'
+        directory_template = '{root_dir}/../../models/{name}/'
         self.directory = directory_template.format(root_dir=root_dir, name=name)
 
     def load_nn_model(self, model_name, n_features = 0, n_classes = 0, n_iter=0):

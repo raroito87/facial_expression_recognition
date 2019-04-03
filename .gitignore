@@ -106,4 +106,4 @@ venv.bak/
 #my excludes
 data/
 .idea/
-DS_STOREsource
+.DS_STORE

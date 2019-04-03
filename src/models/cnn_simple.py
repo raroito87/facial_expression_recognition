@@ -22,36 +22,36 @@ class CnnSimple(nn.Module):
         self.device = device
 
 
-        # Input channels = 1, output channels = 6
+        #Input channels = 1, output channels = n_patterns
         self.conv1 = torch.nn.Conv2d(ch_in, n_patterns, kernel_size=3, stride=1, padding=1)
         self.pool = torch.nn.MaxPool2d(kernel_size=kernel_pool, stride=2, padding=0)
 
-        # 4608 input features, 64 output features (see sizing flow below)
         self.fc1 = torch.nn.Linear(int(n_patterns * size_im[0]/kernel_pool * size_im[1]/kernel_pool), 32)
 
-        # 64 input features, 10 output features for our 10 defined classes
+        #  7 output features for our 7 defined classes
         self.fc2 = torch.nn.Linear(32, d_out)
 
     def forward(self, x):
         # Computes the activation of the first convolution
-        # Size changes from (1, 16, 16) to (6, 16, 16)
+        # Size changes from (1, size_im[0], size_im[1]) to (num_patterns, size_im[0], size_im[1])
         x = F.relu(self.conv1(x))
 
-        # Size changes from (6, 16, 16) to (6, 8, 8)
+        # Size changes from (num_patterns, size_im[0], size_im[1]) to (num_patterns, size_im[0]/poolsize, size_im[1]/poolsize)
         x = self.pool(x)
         self.detected_patterns = x
+
         # Reshape data to input to the input layer of the neural net
-        # Size changes from (6, 8, 8) to (1, 384)
+        # Size changes from a structured dimensional torch to a 1D feature vector
         # Recall that the -1 infers this dimension from the other given dimension
         x = x.view(-1, int(self.n_patterns * self.size_im[0]/self.kernel_pool * self.size_im[1]/self.kernel_pool))
 
         # Computes the activation of the first fully connected layer
-        # Size changes from (1, 384) to (1, 32)
+        # Stil uses a Relu as activation Function
         x = F.relu(self.fc1(x))
 
         # Computes the second fully connected layer (activation applied later)
-        # Size changes from (1, 32) to (1, 10)
-        x = self.fc2(x)
+        # use Sa Sigmoid because is the last layer
+        x = torch.sigmoid(self.fc2(x))
         return (x)
 
     def get_batch(self, x, y, batch_idx, batch_size):

@@ -15,6 +15,6 @@ source activate my_voice_predictor
 
 ```sh
 conda env update --file environment.yml
-source activate my_voice_predictor
+conda activate facial_expression_recognition
 jupyter notebook
 ```
