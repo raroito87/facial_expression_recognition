@@ -15,8 +15,8 @@ class ModelImporter:
         directory_template = '{root_dir}/../../models/{name}/'
         self.directory = directory_template.format(root_dir=root_dir, name=name)
 
-    def load_nn_model(self, model_name, n_features = 0, n_classes = 0, n_iter=0):
-        file_name = f'{model_name}_{n_features}_{n_classes}_{n_iter}.pt'
+    def load_nn_model(self, model_name):
+        file_name = f'{model_name}.pt'
         the_dict = torch.load(self.directory + file_name)
 
         #model = eval(the_dict['model_class'])(*the_dict['args'])

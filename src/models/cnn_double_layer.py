@@ -4,10 +4,11 @@ import torch.nn.functional as F
 
 
 # Neural Network
-class CnnSimple(nn.Module):
-    def __init__(self, name, ch_in = 1, d_out = 7, size_im = [48, 48], n_patterns = 15,
+class CnnDoubleLayer(nn.Module):
+    def __init__(self, name, ch_in = 1, d_out = 7, size_im = [48, 48],
+                 n_patterns1 = 10, n_patterns2 = 15,
                  kernel_pool = 2, dtype=torch.float, device='cpu'):
-        super(CnnSimple, self).__init__()
+        super(CnnDoubleLayer, self).__init__()
 
         self.name = name
 
@@ -17,42 +18,41 @@ class CnnSimple(nn.Module):
         self.n_patterns = n_patterns#num of pattern to look for int he convolution
         self.detected_patterns = None
         self.kernel_pool = kernel_pool
-        self.drop_hidden = nn.Dropout(p=0.5)
-        self.drop_visible = nn.Dropout(p=0.2)
+        self.drop_layer = nn.Dropout(p=0.5)
 
         self.dtype = dtype
         self.device = device
 
         #Input channels = 1, output channels = n_patterns
-        self.conv1 = torch.nn.Conv2d(ch_in, n_patterns, kernel_size=3, stride=1, padding=1)
-        self.batchnorm1 = torch.nn.BatchNorm2d(n_patterns)
+        self.conv1 = torch.nn.Conv2d(ch_in, n_patterns1, kernel_size=3, stride=1, padding=1)
+        self.batchnorm1 = torch.nn.BatchNorm2d(n_patterns1)
         self.pool = torch.nn.MaxPool2d(kernel_size=kernel_pool, stride=2, padding=0)
 
-        self.fc1 = torch.nn.Linear(int(n_patterns * size_im[0]/kernel_pool * size_im[1]/kernel_pool), 32)
+
+        self.conv2 = torch.nn.Conv2d(n_patterns1, n_patterns2, kernel_size=3, stride=1, padding=1)
+        self.batchnorm2 = torch.nn.BatchNorm2d(n_patterns2)
+        self.pool = torch.nn.MaxPool2d(kernel_size=kernel_pool, stride=2, padding=0)
+
+        self.fc1 = torch.nn.Linear(int(n_patterns2 * size_im[0]/(kernel_pool**2) * size_im[1]/(kernel_pool**2)), 32)
 
         #  7 output features for our 7 defined classes
         self.fc2 = torch.nn.Linear(32, d_out)
 
     def forward(self, x):
-        # Computes the activation of the first convolution
-        # Size changes from (1, size_im[0], size_im[1]) to (num_patterns, size_im[0], size_im[1])
+
         x = F.relu(self.batchnorm1(self.conv1(x)))
-
-        # Size changes from (num_patterns, size_im[0], size_im[1]) to (num_patterns, size_im[0]/poolsize, size_im[1]/poolsize)
         x = self.pool(x)
-        self.detected_patterns = x
+        self.detected_patterns1 = x
 
-        # Reshape data to input to the input layer of the neural net
-        # Size changes from a structured dimensional torch to a 1D feature vector
-        # Recall that the -1 infers this dimension from the other given dimension
-        x = x.view(-1, int(self.n_patterns * self.size_im[0]/self.kernel_pool * self.size_im[1]/self.kernel_pool))
+        x = F.relu(self.batchnorm2(self.conv2(x)))
+        x = self.pool(x)
+        self.detected_patterns2 = x
 
-        # Computes the activation of the first fully connected layer
-        # Stil uses a Relu as activation Function
-        x = F.relu(self.fc1(self.drop_hidden(x)))
+        x = x.view(-1, int(self.n_patterns2 * self.size_im[0]/(self.kernel_pool**2) * self.size_im[1]/(self.kernel_pool**2)))
 
-        # Computes the second fully connected layer (activation applied later)
-        x = self.fc2(self.drop_visible(x))
+        x = F.relu(self.batchnorm_l1(self.fc1(x)))
+
+        x = self.fc2(x)
         return (x)
 
     def get_batch(self, x, y, batch_idx, batch_size):
@@ -70,5 +70,9 @@ class CnnSimple(nn.Module):
         return [self.name, self.ch_in, self.d_out, self.size_im , self.n_patterns,
                 self.kernel_pool]# self.dtype , self.device] I cant save stype because is a torch specific type and I get THE ERROR
 
-    def get_detected_patterns(self):
-        return self.detected_patterns
+    def get_detected_patterns1(self):
+        return self.detected_patterns1
+
+    def get_detected_patterns2(self):
+        return self.detected_patterns2
+

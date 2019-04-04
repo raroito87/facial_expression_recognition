@@ -13,17 +13,20 @@ if not __name__ == '__main_':
     X_df = pre.get(name='test').drop(columns=['emotion'])
     y_df = pre.get(name='test')['emotion']
 
-
     dtype = torch.float
     device = torch.device("cpu")
 
-    model_name = 'cnn_simple'
+    n_classes = 7
+    n_epochs = 100
+    learning_rate = 0.00001
+    batch_size = 32
+
+    model_name = f'cnn_simple_reduced_{learning_rate}_{batch_size}_{n_epochs}_{n_classes}'
 
     m_importer = ModelImporter('fer2013_reduced')
 
-    n_classes = 7
-    n_epochs = 100
-    model = m_importer.load_nn_model(model_name, 0, n_classes, n_epochs)
+    model = m_importer.load_nn_model(model_name)
+    model.eval()
 
     X_test = model.reshape_data(torch.tensor(X_df.values, device=device, dtype=dtype))
     y_test = torch.tensor(y_df.values, device=device, dtype=torch.long)
