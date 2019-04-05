@@ -28,7 +28,7 @@ if not __name__ == '__main_':
     device = torch.device("cpu")
 
     n_classes = 7
-    n_epochs = 200
+    n_epochs = 100
     learning_rate = 0.00001
     batch_size = 32
 
@@ -57,5 +57,5 @@ if not __name__ == '__main_':
     if args.s_model:
         m_exporter = ModelExporter('fer2013_reduced')
         m_exporter.save_nn_model(trained_model, optimizer,trained_model.get_args())
-        m_exporter.save_nn_model(last_model, optimizer,trained_model.get_args())
+        m_exporter.save_nn_model(last_model, optimizer,last_model.get_args())
 

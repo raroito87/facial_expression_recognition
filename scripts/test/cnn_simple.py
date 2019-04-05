@@ -19,7 +19,7 @@ if not __name__ == '__main_':
 
     n_classes = 7
     n_epochs = 100
-    model = m_importer.load_nn_model(model_name, 0, n_classes, n_epochs)
+    model = m_importer.load_nn_model(model_name,)
 
     X_test = model.reshape_data(torch.tensor(X_df.values, device=device, dtype=dtype))
     y_test = torch.tensor(y_df.values, device=device, dtype=torch.long)

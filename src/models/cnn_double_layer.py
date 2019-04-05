@@ -15,10 +15,12 @@ class CnnDoubleLayer(nn.Module):
         self.ch_in = ch_in#number of chaels for input
         self.d_out = d_out#number of classes
         self.size_im = size_im#size in px of the input images
-        self.n_patterns = n_patterns#num of pattern to look for int he convolution
+        self.n_patterns1 = n_patterns1#num of pattern to look for int he convolution
+        self.n_patterns2 = n_patterns2#num of pattern to look for int he convolution
         self.detected_patterns = None
         self.kernel_pool = kernel_pool
-        self.drop_layer = nn.Dropout(p=0.5)
+        self.drop_hidden = nn.Dropout(p=0.5)
+        self.drop_visible = nn.Dropout(p=0.2)
 
         self.dtype = dtype
         self.device = device
@@ -50,9 +52,10 @@ class CnnDoubleLayer(nn.Module):
 
         x = x.view(-1, int(self.n_patterns2 * self.size_im[0]/(self.kernel_pool**2) * self.size_im[1]/(self.kernel_pool**2)))
 
-        x = F.relu(self.batchnorm_l1(self.fc1(x)))
+        x = F.relu(self.fc1(self.drop_hidden(x)))
 
-        x = self.fc2(x)
+        # Computes the second fully connected layer (activation applied later)
+        x = self.fc2(self.drop_visible(x))
         return (x)
 
     def get_batch(self, x, y, batch_idx, batch_size):
