@@ -1,6 +1,6 @@
 import os
 import torch
-from models import CnnSimple
+from models import CnnSimple, CnnDoubleLayer
 import torch.nn as nn
 from torch.optim import Adam
 
