@@ -4,7 +4,7 @@ Final project. Facial expression classifier.
 # Description
 The project takes a data set provided by Kaggle: https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/
 
-The goal is to determine anypne's emotional state by taking a picture (using the laptop's Webcam for example).
+The goal is to determine anyone's emotional state by taking a picture (using the laptop's Webcam for example). This will be achieve by building an image classification system in which face pictures are analyzed and categorized accoring to their facial expression.
 
 # Motivation
 
