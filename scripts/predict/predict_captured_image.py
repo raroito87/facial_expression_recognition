@@ -27,14 +27,18 @@ if not __name__ == '__main_':
         img_48 = im_conv.rescale(temp_img, size=48)
         img_array = im_conv.reshape_frame_to_array(img_48)
 
+        n_classes = 7
+        n_epochs = 100
+        learning_rate = 0.0001
+        batch_size = 32
+
         dtype = torch.float
         device = torch.device("cpu")
 
-        model_name = 'cnn_simple'
-        m_importer = ModelImporter('fer2013_reduced')
-        n_classes = 7
-        n_epochs = 100
-        model = m_importer.load_nn_model(model_name, 0, n_classes, n_epochs)
+        model_name = f'cnn_simple_{learning_rate}_{batch_size}_{n_epochs}_{n_classes}'
+        m_importer = ModelImporter('fer2013')
+        model = m_importer.load_nn_model(model_name,)
+        model.eval()
 
         x = model.reshape_data(torch.tensor([img_48], device=device, dtype=dtype))
 

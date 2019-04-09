@@ -14,7 +14,11 @@ if not __name__ == '__main_':
     args=parser.parse_args()
 
     n_classes = 7
+<<<<<<<
     n_epochs = 10
+=======
+    n_epochs = 11
+>>>>>>>
     learning_rate = 0.0001
     batch_size = 64
 
@@ -37,6 +41,8 @@ if not __name__ == '__main_':
     print(f'trained in {time.time() - t} sec')
     pre.save_results(loss_hist, loss_val_hist, f1_val_hist, f'{model_name}')
 
+        pre.save_plt_as_image(plt, f'patterns_1_{idx}')
+            patern_np = pattern.detach().numpy().reshape(24, 24)
     if args.s_model:
         m_exporter = ModelExporter('fer2013_reduced')
         m_exporter.save_nn_model(trained_model, optimizer,trained_model.get_args())

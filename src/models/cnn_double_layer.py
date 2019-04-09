@@ -70,8 +70,8 @@ class CnnDoubleLayer(nn.Module):
         return x.reshape(x.shape[0], self.ch_in, self.size_im[0], self.size_im[1])
 
     def get_args(self):
-        return [self.name, self.ch_in, self.d_out, self.size_im , self.n_patterns,
-                self.kernel_pool]# self.dtype , self.device] I cant save stype because is a torch specific type and I get THE ERROR
+        return [self.name, self.ch_in, self.d_out, self.size_im , self.n_patterns1,
+                self.n_patterns2, self.kernel_pool]# self.dtype , self.device] I cant save stype because is a torch specific type and I get THE ERROR
 
     def get_detected_patterns1(self):
         return self.detected_patterns1

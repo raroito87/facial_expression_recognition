@@ -19,6 +19,7 @@ class ModelImporter:
         file_name = f'{model_name}.pt'
         the_dict = torch.load(self.directory + file_name)
 
+        print(the_dict['args'])
         #model = eval(the_dict['model_class'])(*the_dict['args'])
         model = eval(the_dict['model_class'])(*the_dict['args'])
         optimizer = eval(the_dict['optimizer_class'])

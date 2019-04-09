@@ -26,6 +26,12 @@ class ImageConverter:
     def reshape_frame_to_array(self, frame):
         return frame.reshape(1, 48*48)
 
+    def reshape_array_to_frame(self, array):
+        return array.reshape(48, 48)
+
+    def flip_frame_horitzontally(self, frame):
+        return cv2.flip(frame, 1)
+
     def _get_crop_coordinates(self, rows, cols):
         if cols > rows:
             #rows remain same, crop columns

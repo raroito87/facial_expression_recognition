@@ -14,7 +14,7 @@ class ModelExporter:
             print (f'created directory {self.directory}')
             os.makedirs(self.directory)
 
-    def save_nn_model(self, model, optimizer, args = []):
+    def save_nn_model(self, model, optimizer, args = [], debug=True):
         the_dict = model.state_dict()
         the_dict['model_class'] = type(model).__name__
         the_dict['optimizer_class']= type(optimizer).__name__
@@ -23,4 +23,5 @@ class ModelExporter:
         file_name = f'{model.name}.pt'
         torch.save(the_dict, self.directory + file_name)
 
-        print(f'model saved {model}')
+        if debug:
+            print(f'model saved {model}')
