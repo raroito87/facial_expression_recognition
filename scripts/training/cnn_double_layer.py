@@ -10,16 +10,17 @@ if not __name__ == '__main_':
 
     parser = argparse.ArgumentParser(description='fer2013')
     parser.add_argument('--s_model', default=True, help='save trained model')
+    parser.add_argument('--s_patterns', default=False, help='save patterns images')
 
     args=parser.parse_args()
 
     n_classes = 7
-    n_epochs = 200
-    learning_rate = 0.00005
+    n_epochs = 100
+    learning_rate = 0.0001
     batch_size = 32
 
     pre = Preprocessing('fer2013')
-    pre.load_data(filename='train_norm.csv', name='train')
+    pre.load_data(filename='train_expanded.csv', name='train')
 
     X_df = pre.get(name='train').drop(columns=['emotion'])
     y_df = pre.get(name='train')['emotion']
@@ -37,27 +38,29 @@ if not __name__ == '__main_':
     print(f'trained in {time.time() - t} sec')
     pre.save_results(loss_hist, loss_val_hist, f1_val_hist, f'{model_name}')
 
-    detected_patterns1 = trained_model.get_detected_patterns1()
-    for idx in range(10):
-        plt.figure(1, figsize=(20, 10))
-        for p in range(trained_model.n_patterns1):
-            pattern = detected_patterns1[idx][p].reshape(detected_patterns1.shape[2], detected_patterns1.shape[3])
-            patern_np = pattern.detach().numpy().reshape(24, 24)
-            plt.subplot(2, 5, 1 + p)
-            plt.imshow(patern_np, cmap='gray', interpolation='none')
-        pre.save_plt_as_image(plt, f'patterns_1_{idx}')
-
-    detected_patterns2 = trained_model.get_detected_patterns2()
-    for idx in range(10):
-        plt.figure(1, figsize=(20, 10))
-        for p in range(trained_model.n_patterns2):
-            pattern = detected_patterns2[idx][p].reshape(detected_patterns2.shape[2], detected_patterns2.shape[3])
-            patern_np = pattern.detach().numpy().reshape(12, 12)
-            plt.subplot(3, 5, 1 + p)
-            plt.imshow(patern_np, cmap='gray', interpolation='none')
-        pre.save_plt_as_image(plt, f'patterns_2_{idx}')
-
     if args.s_model:
-        m_exporter = ModelExporter('fer2013_reduced')
+        m_exporter = ModelExporter('fer2013_expanded')
         m_exporter.save_nn_model(trained_model, optimizer,trained_model.get_args())
-        m_exporter.save_nn_model(last_model, optimizer,last_model.get_args())
+
+    if args.s_patterns:
+        detected_patterns1 = trained_model.get_detected_patterns1()
+        for idx in range(10):
+            plt.figure(1, figsize=(20, 10))
+            for p in range(trained_model.n_patterns1):
+                pattern = detected_patterns1[idx][p].reshape(detected_patterns1.shape[2],
+                                                             detected_patterns1.shape[3])
+                patern_np = pattern.detach().numpy().reshape(24, 24)
+                plt.subplot(2, 5, 1 + p)
+                plt.imshow(patern_np, cmap='gray', interpolation='none')
+            pre.save_plt_as_image(plt, f'patterns_1_{idx}')
+
+        detected_patterns2 = trained_model.get_detected_patterns2()
+        for idx in range(10):
+            plt.figure(1, figsize=(20, 10))
+            for p in range(trained_model.n_patterns2):
+                pattern = detected_patterns2[idx][p].reshape(detected_patterns2.shape[2],
+                                                             detected_patterns2.shape[3])
+                patern_np = pattern.detach().numpy().reshape(12, 12)
+                plt.subplot(3, 5, 1 + p)
+                plt.imshow(patern_np, cmap='gray', interpolation='none')
+            pre.save_plt_as_image(plt, f'patterns_2_{idx}')

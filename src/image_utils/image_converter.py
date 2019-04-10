@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import math
 
 class ImageConverter:
 
@@ -32,6 +33,13 @@ class ImageConverter:
     def flip_frame_horitzontally(self, frame):
         return cv2.flip(frame, 1)
 
+    def rotate_image(self, frame, degrees):
+        radians = math.radians(degrees)
+        rows, cols = frame.shape
+        M = cv2.getRotationMatrix2D(((cols - 1) / 2.0, (rows - 1) / 2.0), 90, 1)
+        dst = cv2.warpAffine(frame, M, (cols, rows))
+        return dst
+
     def _get_crop_coordinates(self, rows, cols):
         if cols > rows:
             #rows remain same, crop columns
@@ -49,3 +57,5 @@ class ImageConverter:
             x1 = 0
             x2 = cols - 1
             return int(y1), int(y2), int(x1), int(x2)
+
+
