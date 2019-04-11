@@ -37,8 +37,14 @@ class TestImageConverter(unittest.TestCase):
 
         self.assertEqual(np.array_equal(img_rot, img_rot_), True)
 
-        #_save_image(img_rot, f'rot{degrees}_{file_name}')
-
+    def test_rotate_image_save(self):
+        file_name = 'sad_48.png'
+        img = _load_image(file_name)
+        self.assertEqual(img.size == 0, False)
+        degrees = 15
+        img_converter = ImageConverter()
+        img_rot = img_converter.rotate_image(img, degrees)
+        _save_image(img_rot, f'rot{degrees}_{file_name}')
 
 
 

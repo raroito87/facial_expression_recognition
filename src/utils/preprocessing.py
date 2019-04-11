@@ -27,6 +27,13 @@ class Preprocessing:
         self.data[name] = df
         return df
 
+    def load_data_np(self, filename, filetype='csv', sep = ',', type = np.float32,  **kwargs):
+        filepath = f'{self.directory}/{filename}'
+
+        file = f'{filepath}.{filetype}'
+        data_np = np.loadtxt(file, delimiter = sep, dtype = type)
+        return data_np
+
     def save(self, name, filetype='csv', *, index=False, **kwargs):
         filepath = f'{self.directory}/{name}.{filetype}'
         getattr(self.data[name], f'to_{filetype}')(filepath, index=index, **kwargs)

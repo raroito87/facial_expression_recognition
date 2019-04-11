@@ -21,3 +21,4 @@ dependencies:
   - opencv-python
   - imageio
   - scikit-image
+  - torchvision

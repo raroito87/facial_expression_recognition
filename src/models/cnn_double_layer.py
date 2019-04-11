@@ -12,7 +12,7 @@ class CnnDoubleLayer(nn.Module):
 
         self.name = name
 
-        self.ch_in = ch_in#number of chaels for input
+        self.ch_in = ch_in#number of chanels for input
         self.d_out = d_out#number of classes
         self.size_im = size_im#size in px of the input images
         self.n_patterns1 = n_patterns1#num of pattern to look for int he convolution

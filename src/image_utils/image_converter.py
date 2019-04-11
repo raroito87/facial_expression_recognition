@@ -33,12 +33,23 @@ class ImageConverter:
     def flip_frame_horitzontally(self, frame):
         return cv2.flip(frame, 1)
 
-    def rotate_image(self, frame, degrees):
-        radians = math.radians(degrees)
-        rows, cols = frame.shape
-        M = cv2.getRotationMatrix2D(((cols - 1) / 2.0, (rows - 1) / 2.0), 90, 1)
-        dst = cv2.warpAffine(frame, M, (cols, rows))
-        return dst
+    def rotate_image(self, img, degrees):
+        #add padding so after rotation there wont be 'blank spaces'
+        img_padding, org_rows, org_cols = self._add_padding_to_img(img)
+
+        rows, cols = img_padding.shape
+        M = cv2.getRotationMatrix2D(((cols - 1) / 2.0, (rows - 1) / 2.0), degrees, 1)
+        dst = cv2.warpAffine(img_padding, M, (cols, rows), borderValue=255)
+
+        #crop image to the original size
+        y1 = rows//2 - org_rows//2
+        y2 = y1 + org_rows
+        x1 = cols//2 - org_cols//2
+        x2 = x1 + org_cols
+
+        rot_img = dst[y1:y2, x1:x2].copy()
+
+        return rot_img
 
     def _get_crop_coordinates(self, rows, cols):
         if cols > rows:
@@ -58,4 +69,20 @@ class ImageConverter:
             x2 = cols - 1
             return int(y1), int(y2), int(x1), int(x2)
 
+    def _compute_mean_bg_value(self, img):
+        rows, cols = img.shape
+        rows_2 = rows//2
+        cols_2 =  cols//2
 
+        v = np.array([img[0, cols_2], img[rows-1, cols_2], img[rows_2, 0], img[rows_2, cols - 1]])
+
+        return np.mean(v)
+
+    def _add_padding_to_img(self, img):
+        #extend the image by half
+        rows, cols = img.shape
+        rows_2 = rows//2
+        cols_2 =  cols//2
+        reflect101 = cv2.copyMakeBorder(img, rows_2, rows_2, cols_2, cols_2, cv2.BORDER_REPLICATE)# top , bottom, left, right
+
+        return reflect101, rows, cols
