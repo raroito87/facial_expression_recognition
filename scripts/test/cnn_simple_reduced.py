@@ -7,7 +7,7 @@ import torch
 
 if not __name__ == '__main_':
 
-    pre = Preprocessing('fer2013')
+    pre = Preprocessing('fer2013_DatasetA')
     pre.load_data(filename='test_public_norm.csv', name='test')
 
     X_df = pre.get(name='test').drop(columns=['emotion'])

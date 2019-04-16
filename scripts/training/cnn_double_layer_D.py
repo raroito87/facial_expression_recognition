@@ -15,12 +15,12 @@ if not __name__ == '__main_':
     args=parser.parse_args()
 
     n_classes = 7
-    n_epochs = 100
+    n_epochs = 150
     learning_rate = 0.0001
     batch_size = 32
 
     pre = Preprocessing('fer2013')
-    pre.load_data(filename='train_expanded.csv', name='train')
+    pre.load_data(filename='DatasetD.csv', name='train')
 
     X_df = pre.get(name='train').drop(columns=['emotion'])
     y_df = pre.get(name='train')['emotion']
@@ -28,7 +28,7 @@ if not __name__ == '__main_':
     dtype = torch.float
     device = torch.device("cpu")
 
-    model_name = f'cnn_double_layer_{learning_rate}_{batch_size}_{n_epochs}_{n_classes}'
+    model_name = f'cnn_double_layer_D_{learning_rate}_{batch_size}_{n_epochs}_{n_classes}'
     model = CnnDoubleLayer(model_name, d_out=n_classes)
     model.train()
 
@@ -39,7 +39,7 @@ if not __name__ == '__main_':
     pre.save_results(loss_hist, loss_val_hist, f1_val_hist, f'{model_name}')
 
     if args.s_model:
-        m_exporter = ModelExporter('fer2013_expanded')
+        m_exporter = ModelExporter('fer2013_DatasetD')
         m_exporter.save_nn_model(trained_model, optimizer,trained_model.get_args())
 
     if args.s_patterns:

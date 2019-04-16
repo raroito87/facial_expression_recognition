@@ -3,7 +3,7 @@ import torch
 
 if not __name__ == '__main_':
 
-    pre = Preprocessing('fer2013')
+    pre = Preprocessing('fer2013_DatasetA')
     pre.load_data(filename='test_public_norm.csv', name='test')
 
     X_df = pre.get(name='test').drop(columns=['emotion'])
@@ -20,7 +20,7 @@ if not __name__ == '__main_':
 
     model_name = f'cnn_double_layer_reduced_{learning_rate}_{batch_size}_{n_totalepochs}_{n_classes}'
     model_name_bestvalloss = f'{model_name}_epoch150'
-    m_importer = ModelImporter('fer2013')
+    m_importer = ModelImporter('fer2013_DatasetA')
     model = m_importer.load_nn_model(model_name_bestvalloss)
     model.eval()
 

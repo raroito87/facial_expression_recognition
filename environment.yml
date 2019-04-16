@@ -22,3 +22,5 @@ dependencies:
   - imageio
   - scikit-image
   - torchvision
+  - memory_profiler
+  - psutil

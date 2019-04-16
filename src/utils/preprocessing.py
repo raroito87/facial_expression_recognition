@@ -2,8 +2,6 @@ import os
 import pandas as pd
 import numpy as np
 from sklearn import preprocessing
-import re
-import torch
 import matplotlib.pyplot as plt
 
 class Preprocessing:

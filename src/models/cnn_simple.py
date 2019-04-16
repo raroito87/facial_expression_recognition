@@ -33,6 +33,7 @@ class CnnSimple(nn.Module):
         #  7 output features for our 7 defined classes
         self.fc2 = torch.nn.Linear(32, d_out)
 
+    #@profile
     def forward(self, x):
         # Computes the activation of the first convolution
         # Size changes from (1, size_im[0], size_im[1]) to (num_patterns, size_im[0], size_im[1])
@@ -40,7 +41,6 @@ class CnnSimple(nn.Module):
 
         # Size changes from (num_patterns, size_im[0], size_im[1]) to (num_patterns, size_im[0]/poolsize, size_im[1]/poolsize)
         x = self.pool(x)
-        self.detected_patterns = x
 
         # Reshape data to input to the input layer of the neural net
         # Size changes from a structured dimensional torch to a 1D feature vector

@@ -36,7 +36,7 @@ if not __name__ == '__main_':
         device = torch.device("cpu")
 
         model_name = f'cnn_simple_{learning_rate}_{batch_size}_{n_epochs}_{n_classes}'
-        m_importer = ModelImporter('fer2013')
+        m_importer = ModelImporter('fer2013_DatasetA')
         model = m_importer.load_nn_model(model_name,)
         model.eval()
 

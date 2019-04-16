@@ -36,7 +36,6 @@ class TrainClassifier():
         self.data_is_prepared = True
         return
 
-
     def run_train(self, n_epochs, lr=0.001, batch_size=256):
         self.lr = lr
         if(self.data_is_prepared == False):
@@ -49,6 +48,7 @@ class TrainClassifier():
         # Train
         loss_hist = []
         loss_val_hist = []
+        acc_val_hist = []
         f1_val_hist = []
         model_versions = {}
 
@@ -89,7 +89,10 @@ class TrainClassifier():
                 model_versions[t] = copy.deepcopy(self.model.state_dict())
 
                 accuracy_train = (outputs.argmax(1) == self.y.long()).float().mean()
+
                 accuracy_val= (outputs_val.argmax(1) == self.y_val.long()).float().mean()
+                acc_val_hist.append(accuracy_val)
+
                 f1_score = metrics.f1_score(self.y_val.long().numpy(), outputs_val.argmax(1).numpy(), average='macro')
                 f1_val_hist.append(f1_score)
 
@@ -103,6 +106,8 @@ class TrainClassifier():
         print(f'optimal iteration val_loss: {best_iteration}')
         best_iteration_f1 = idx * f1_val_hist.index(max(f1_val_hist))
         print(f'optimal iteration val_f1: {best_iteration_f1}')
+        best_iteration_acc = idx * acc_val_hist.index(max(acc_val_hist))
+        print(f'optimal iteration val_acc: {best_iteration_acc}')
 
         #use the best trained model
         self.model.load_state_dict(state_dict=model_versions[best_iteration])
@@ -112,6 +117,7 @@ class TrainClassifier():
         y_pred = self.model(self.x).argmax(1)
         accuracy_soft = (y_pred == self.y.long()).float().mean()
         print(f'training accuracy: {accuracy_soft}')
+
 
         return self.model, optimizer, criterion, loss_hist, loss_val_hist, f1_val_hist
 

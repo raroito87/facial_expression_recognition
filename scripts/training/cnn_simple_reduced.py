@@ -12,13 +12,13 @@ import matplotlib.pyplot as plt
 
 if not __name__ == '__main_':
 
-    parser = argparse.ArgumentParser(description='fer2013')
+    parser = argparse.ArgumentParser(description='fer2013_DatasetA')
     parser.add_argument('--s_model', default=True, help='save trained model')
     parser.add_argument('--s_patterns', default=False, help='save patterns images')
 
     args=parser.parse_args()
 
-    pre = Preprocessing('fer2013')
+    pre = Preprocessing('fer2013_DatasetA')
     pre.load_data(filename='train_reduced_norm.csv', name='train')
 
     X_df = pre.get(name='train').drop(columns=['emotion'])

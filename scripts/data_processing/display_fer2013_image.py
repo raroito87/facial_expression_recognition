@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 if not __name__ == '__main_':
 
-    img_imp = ImageImporter(name = 'fer2013')
+    img_imp = ImageImporter(name = 'fer2013_DatasetA')
     img_exp = ImageExporter()
 
     path = img_imp.directory + '/images/'

@@ -30,7 +30,6 @@ class CnnDoubleLayer(nn.Module):
         self.batchnorm1 = torch.nn.BatchNorm2d(n_patterns1)
         self.pool = torch.nn.MaxPool2d(kernel_size=kernel_pool, stride=2, padding=0)
 
-
         self.conv2 = torch.nn.Conv2d(n_patterns1, n_patterns2, kernel_size=3, stride=1, padding=1)
         self.batchnorm2 = torch.nn.BatchNorm2d(n_patterns2)
         self.pool = torch.nn.MaxPool2d(kernel_size=kernel_pool, stride=2, padding=0)
@@ -41,14 +40,15 @@ class CnnDoubleLayer(nn.Module):
         self.fc2 = torch.nn.Linear(32, d_out)
 
     def forward(self, x):
-
         x = F.relu(self.batchnorm1(self.conv1(x)))
         x = self.pool(x)
-        self.detected_patterns1 = x
+
+        #self.detected_patterns1 = x
 
         x = F.relu(self.batchnorm2(self.conv2(x)))
         x = self.pool(x)
-        self.detected_patterns2 = x
+
+        #self.detected_patterns2 = x
 
         x = x.view(-1, int(self.n_patterns2 * self.size_im[0]/(self.kernel_pool**2) * self.size_im[1]/(self.kernel_pool**2)))
 

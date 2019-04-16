@@ -15,15 +15,15 @@ import matplotlib.pyplot as plt
 
 if not __name__ == '__main_':
 
-    parser = argparse.ArgumentParser(description='fer2013')
+    parser = argparse.ArgumentParser(description='fer2013_DatasetA')
     parser.add_argument('--s_model', default=True, help='save trained model')
 
     args=parser.parse_args()
 
     n_epochs = 100
 
-    pre = Preprocessing('fer2013')
-    pre.load_data(filename='train_norm.csv', name='train')
+    pre = Preprocessing('fer2013_DatasetA')
+    pre.load_data(filename='DatasetA.csv', name='train')
 
     X_train_df = pre.get(name='train').drop(columns=['emotion'])
     y_train_df = pre.get(name='train')['emotion']
@@ -70,7 +70,7 @@ if not __name__ == '__main_':
     print(f'test accuracy best model {c(X_pred, X_test)}')
 
     if args.s_model:
-        m_exporter = ModelExporter('fer2013')
+        m_exporter = ModelExporter('fer2013_DatasetA')
         m_exporter.save_nn_model(trained_model, opt, 0, n_features_encoded, n_epochs, trained_model.get_args())
 
     X_train_encoded = trained_model.encoder(X_train)
