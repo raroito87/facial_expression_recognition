@@ -1,5 +1,6 @@
 import os
 import torch
+import matplotlib.pyplot as plt
 
 class ModelExporter:
     def __init__(self, name):
@@ -25,3 +26,32 @@ class ModelExporter:
 
         if debug:
             print(f'model saved {model}')
+
+
+
+    def save_results(self, result_train, result_val, f1_val, name):
+        title = f'{name}_loss'
+        plt.figure(1)
+        plt.plot(result_train)
+        plt.plot(result_val)
+        plt.title = title
+        self.save_plt_as_image(plt, title)
+        plt.close()
+
+        title = f'{name}_f1'
+        plt.figure(1)
+        plt.plot(f1_val)
+        plt.title = title
+        self.save_plt_as_image(plt, title)
+        plt.close()
+
+    def save_plt_as_image(self, plt, name, format='.png'):
+        #!!!!!! call this before plt.show()
+        path = f'{self.directory}/plots/'
+        if not os.path.exists(path):
+            print(f'created directory {path}')
+            os.makedirs(path)
+
+        filename = path + name + format
+        print(f'save {filename}')
+        plt.savefig(filename)

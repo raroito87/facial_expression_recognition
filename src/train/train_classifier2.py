@@ -12,7 +12,14 @@ class TrainClassifier2():
     def __init__(self, model, inputs, targets, test_size = 0.1):
         #inputs and target are DF
         self.model = model
+
+        #model to evaluate
+        self.model_eval = copy.deepcopy(self.model)
+        self.model_eval.to('cpu')
+
         inputs_train, inputs_val, targets_train, targets_val = train_test_split(inputs, targets, test_size=test_size)
+
+        self.sampler = self._create_sampler(targets_train.values.astype(int))
 
         # Generators
         self.training_set = Fer2013Dataset(inputs=inputs_train, targets=targets_train, device='cpu')
@@ -25,29 +32,13 @@ class TrainClassifier2():
 
 
         self.model.to(self.device)
-        self.sampler = None
 
         print(f'use cuda: {self.use_cuda}')
-
-    def create_sampler(self, batch_size = 128):
-        target_np = self.training_set.y_data.numpy().astype(int)
-
-        #create the stratified sampler
-        class_sample_count = np.array([len(np.where(target_np==t)[0]) for t in np.unique(target_np)])
-        weight = 1. / class_sample_count
-        samples_weight = np.array([weight[t] for t in target_np])
-        samples_weight = torch.from_numpy(samples_weight)
-        samples_weight = samples_weight.double()
-        return WeightedRandomSampler(samples_weight, len(samples_weight), replacement=True)
-
 
     def run_train(self, n_epochs, lr=0.001, batch_size=256):
         print(f'training model: {self.model.name}')
 
-        self.sampler = self.create_sampler(batch_size)
-
         training_generator = DataLoader(self.training_set, sampler=self.sampler,  batch_size =batch_size, num_workers=2)
-
 
         self.model.train()#set model to training mode
         # Loss and optimizer
@@ -55,15 +46,21 @@ class TrainClassifier2():
         optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
         # Train
-        loss_hist = []
-        loss_val_hist = []
-        acc_val_hist = []
-        f1_val_hist = []
+        train_loss_hist = []
+        val_loss_hist = []
+
+        train_acc_hist = []
+        val_acc_hist = []
+
+        train_f1_hist = []
+        val_f1_hist = []
+
         model_versions = {}
 
         m_exporter = ModelExporter('temp')
         model_name = copy.deepcopy(self.model.name)
 
+        f = 10
         for t in range(n_epochs):
             for i, (batch_x, batch_y) in enumerate(training_generator):
 
@@ -86,51 +83,68 @@ class TrainClassifier2():
                 if i % 10 == 0:
                     print('.', end='', flush=True)
 
-            # Berechne den Fehler (Ausgabe des Fehlers alle 50 Iterationen)
+            if t % f == 0:
+                model_params = copy.deepcopy(self.model.state_dict())
+                model_versions[t] = model_params
 
+                train_loss, train_acc, train_f1, val_loss, val_acc, val_f1 = self._evaluate(model_params, criterion)
 
-            idx = 10
-            if t % idx == 0:
-                #outputs = self.model(self.training_set.x_data.to(self.device))
-                #loss = criterion(outputs, self.training_set.y_data.to(self.device))
-                #loss_hist.append(loss.item())
+                train_loss_hist.append(train_loss)
+                train_acc_hist.append(train_acc)
+                train_f1_hist.append(train_f1)
 
-                outputs_val = self.model(self.validation_set.x_data.to(self.device))
-                loss_val = criterion(outputs_val, self.validation_set.y_data.to(self.device))
-                loss_val_hist.append(loss_val.item())
-                #model_versions[t] = copy.deepcopy(self.model.state_dict())
+                val_loss_hist.append(val_loss)
+                val_acc_hist.append(val_acc)
+                val_f1_hist.append(val_f1)
 
-                #accuracy_train = (outputs.argmax(1) == self.training_set.y_data.long()).float().mean()
-
-                accuracy_val= (outputs_val.argmax(1) == self.validation_set.y_data.long().to(self.device)).float().mean()
-                acc_val_hist.append(accuracy_val)
-
-                #f1_score = metrics.f1_score(self.validation_set.y_data.long().numpy(), outputs_val.argmax(1).numpy(), average='macro')
-                #f1_val_hist.append(f1_score)
-
-                #print(t, ' train_loss: ', loss.item(), 'val_loss: ', loss_val.item(), ' - train_acc: ',
-                #     accuracy_train, ', val_acc: ', accuracy_val, ', val_f1: ', f1_score)
-
-                print(t, ' train_loss: ', loss.item(), 'val_loss: ', loss_val.item(), ' - , val_acc: ', accuracy_val)
+                print('\n{} loss t:{:0.3f} v: {:0.3f} | acc t: {:0.4f} v: {:0.3f} | f1 t: {:0.3f} v: {:0.3f}'.format(t,
+                      train_loss, val_loss, train_acc, val_acc, train_f1, val_f1))
 
                 self.model.name = f'{model_name}_epoch{t}'
-                #m_exporter.save_nn_model(self.model, optimizer, self.model.get_args(), debug=False)
+                m_exporter.save_nn_model(self.model, optimizer, self.model.get_args(), debug=False)
 
-
-        best_iteration = idx*loss_val_hist.index(min(loss_val_hist))
+        print(f'\n ####training finished####')
+        best_iteration = f*val_loss_hist.index(min(val_loss_hist))
         print(f'optimal iteration val_loss: {best_iteration}')
-        #best_iteration_f1 = idx * f1_val_hist.index(max(f1_val_hist))
-        #print(f'optimal iteration val_f1: {best_iteration_f1}')
-        best_iteration_acc = idx * acc_val_hist.index(max(acc_val_hist))
+        best_iteration_acc = f * val_acc_hist.index(max(val_acc_hist))
         print(f'optimal iteration val_acc: {best_iteration_acc}')
+        best_iteration_f1 = f * val_f1_hist.index(max(val_f1_hist))
+        print(f'optimal iteration val_f1: {best_iteration_f1}')
 
-        #use the best trained model
-        #self.model.load_state_dict(state_dict=model_versions[best_iteration])
-        #self.model.eval()#set model to test mode
-        #self.model.name = f'{model_name}'
+        # use the best trained model
+        self.model.load_state_dict(state_dict=model_versions[best_iteration])
+        self.model.eval()# set model to test model
+        self.model.name = f'{model_name}'
 
-        #y_pred = self.model(self.training_set.x_data).argmax(1)
-        #accuracy_soft = (y_pred == self.training_set.y_data.long()).float().mean()
-        #print(f'training accuracy: {accuracy_soft}')
+        return self.model, optimizer, criterion,\
+               train_loss_hist, train_acc_hist, train_f1_hist,\
+               val_loss_hist, val_acc_hist, val_f1_hist
 
-        return self.model, optimizer, criterion, loss_hist, loss_val_hist, f1_val_hist
+    def _create_sampler(self, target_np):
+        class_sample_count = np.array([len(np.where(target_np == t)[0]) for t in np.unique(target_np)])
+        weight = 1. / class_sample_count
+        samples_weight = torch.from_numpy(np.array([weight[t] for t in target_np])).double()
+        return WeightedRandomSampler(samples_weight, len(samples_weight), replacement=True)
+
+    def _evaluate(self, model_param, criterion):
+        # evaluate in CPU
+        # can't move all the training dataset to GPU, in my case and resources it is too much
+        self.model_eval.load_state_dict(state_dict=model_param)
+        self.model_eval.eval()
+
+        train_prob = self.model_eval(self.training_set.x_data.to('cpu'))
+        train_pred = train_prob.argmax(1)
+        train_loss = criterion(train_prob, self.training_set.y_data.to('cpu'))
+        train_acc = (train_pred == self.training_set.y_data.long()).float().mean()
+        train_f1 = metrics.f1_score(self.training_set.y_data.long().numpy(), train_pred.numpy(), average='macro')
+
+        val_prob = self.model_eval(self.validation_set.x_data.to('cpu'))
+        val_pred = val_prob.argmax(1)
+        val_loss = criterion(val_prob, self.validation_set.y_data.to('cpu'))
+        val_acc = (val_pred == self.validation_set.y_data.long()).float().mean()
+        val_f1 = metrics.f1_score(self.validation_set.y_data.long().numpy(), val_pred.numpy(), average='macro')
+
+        return train_loss.item(), train_acc, train_f1, val_loss.item(), val_acc, val_f1
+
+
+
