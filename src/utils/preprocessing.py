@@ -93,18 +93,37 @@ class Preprocessing:
     def set(self, name, value):
         self.data[name] = value
 
-    def save_results(self, result_train, result_val, f1_val, name):
+    def save_results(self, name,
+                     train_loss_hist, train_acc_hist, train_f1_hist, train_b_hist,
+                     val_loss_hist, val_acc_hist, val_f1_hist, val_b_hist):
         title = f'{name}_loss'
         plt.figure(1)
-        plt.plot(result_train)
-        plt.plot(result_val)
+        plt.plot(train_loss_hist)
+        plt.plot(val_loss_hist)
+        plt.title = title
+        self.save_plt_as_image(plt, title)
+        plt.close()
+
+        title = f'{name}_acc'
+        plt.figure(1)
+        plt.plot(train_acc_hist)
+        plt.plot(val_acc_hist)
         plt.title = title
         self.save_plt_as_image(plt, title)
         plt.close()
 
         title = f'{name}_f1'
         plt.figure(1)
-        plt.plot(f1_val)
+        plt.plot(train_f1_hist)
+        plt.plot(val_f1_hist)
+        plt.title = title
+        self.save_plt_as_image(plt, title)
+        plt.close()
+
+        title = f'{name}_balanced_score'
+        plt.figure(1)
+        plt.plot(train_b_hist)
+        plt.plot(val_b_hist)
         plt.title = title
         self.save_plt_as_image(plt, title)
         plt.close()

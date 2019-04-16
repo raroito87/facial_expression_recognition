@@ -3,10 +3,11 @@ import copy
 from utils import ModelExporter
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
-from data import  Fer2013Dataset
+from data import Fer2013Dataset
 from torch.utils.data import WeightedRandomSampler, DataLoader
 import numpy as np
 #import resource
+from utils import Metrics
 
 class TrainClassifier2():
     def __init__(self, model, inputs, targets, test_size = 0.1):
@@ -19,6 +20,7 @@ class TrainClassifier2():
 
         inputs_train, inputs_val, targets_train, targets_val = train_test_split(inputs, targets, test_size=test_size)
 
+        self.labels = None
         self.sampler = self._create_sampler(targets_train.values.astype(int))
 
         # Generators
@@ -55,6 +57,9 @@ class TrainClassifier2():
         train_f1_hist = []
         val_f1_hist = []
 
+        train_b_hist = []
+        val_b_hist = []
+
         model_versions = {}
 
         m_exporter = ModelExporter('temp')
@@ -87,18 +92,22 @@ class TrainClassifier2():
                 model_params = copy.deepcopy(self.model.state_dict())
                 model_versions[t] = model_params
 
-                train_loss, train_acc, train_f1, val_loss, val_acc, val_f1 = self._evaluate(model_params, criterion)
+                train_loss, train_acc, train_f1, val_loss,\
+                val_acc, val_f1, train_b, val_b = self._evaluate(model_params, criterion)
 
                 train_loss_hist.append(train_loss)
                 train_acc_hist.append(train_acc)
                 train_f1_hist.append(train_f1)
+                train_b_hist.append(train_b)
 
                 val_loss_hist.append(val_loss)
                 val_acc_hist.append(val_acc)
                 val_f1_hist.append(val_f1)
+                val_b_hist.append(val_b)
 
-                print('\n{} loss t:{:0.3f} v: {:0.3f} | acc t: {:0.4f} v: {:0.3f} | f1 t: {:0.3f} v: {:0.3f}'.format(t,
-                      train_loss, val_loss, train_acc, val_acc, train_f1, val_f1))
+                print('\n{} loss t:{:0.3f} v: {:0.3f} | acc t: {:0.4f} v: {:0.3f} |'
+                      ' f1 t: {:0.3f} v: {:0.3f} | b t: {:0.3f} v: {:0.3f}'.format(t,
+                      train_loss, val_loss, train_acc, val_acc, train_f1, val_f1, train_b, val_b))
 
                 self.model.name = f'{model_name}_epoch{t}'
                 m_exporter.save_nn_model(self.model, optimizer, self.model.get_args(), debug=False)
@@ -110,6 +119,8 @@ class TrainClassifier2():
         print(f'optimal iteration val_acc: {best_iteration_acc}')
         best_iteration_f1 = f * val_f1_hist.index(max(val_f1_hist))
         print(f'optimal iteration val_f1: {best_iteration_f1}')
+        best_iteration_b = f * val_b_hist.index(max(val_b_hist))
+        print(f'optimal iteration val_balanced_score: {best_iteration_b}')
 
         # use the best trained model
         self.model.load_state_dict(state_dict=model_versions[best_iteration])
@@ -117,11 +128,12 @@ class TrainClassifier2():
         self.model.name = f'{model_name}'
 
         return self.model, optimizer, criterion,\
-               train_loss_hist, train_acc_hist, train_f1_hist,\
-               val_loss_hist, val_acc_hist, val_f1_hist
+               train_loss_hist, train_acc_hist, train_f1_hist, train_b_hist,\
+               val_loss_hist, val_acc_hist, val_f1_hist, val_b_hist
 
     def _create_sampler(self, target_np):
-        class_sample_count = np.array([len(np.where(target_np == t)[0]) for t in np.unique(target_np)])
+        self.labels = np.unique(target_np)
+        class_sample_count = np.array([len(np.where(target_np == t)[0]) for t in self.labels])
         weight = 1. / class_sample_count
         samples_weight = torch.from_numpy(np.array([weight[t] for t in target_np])).double()
         return WeightedRandomSampler(samples_weight, len(samples_weight), replacement=True)
@@ -137,14 +149,18 @@ class TrainClassifier2():
         train_loss = criterion(train_prob, self.training_set.y_data.to('cpu'))
         train_acc = (train_pred == self.training_set.y_data.long()).float().mean()
         train_f1 = metrics.f1_score(self.training_set.y_data.long().numpy(), train_pred.numpy(), average='macro')
+        train_m = Metrics(self.training_set.y_data, train_pred, self.labels)
+        train_b = train_m.balanced_score()
 
         val_prob = self.model_eval(self.validation_set.x_data.to('cpu'))
         val_pred = val_prob.argmax(1)
         val_loss = criterion(val_prob, self.validation_set.y_data.to('cpu'))
         val_acc = (val_pred == self.validation_set.y_data.long()).float().mean()
         val_f1 = metrics.f1_score(self.validation_set.y_data.long().numpy(), val_pred.numpy(), average='macro')
+        val_m = Metrics(self.validation_set.y_data, val_pred, self.labels)
+        val_b = val_m.balanced_score()
 
-        return train_loss.item(), train_acc, train_f1, val_loss.item(), val_acc, val_f1
+        return train_loss.item(), train_acc, train_f1, val_loss.item(), val_acc, val_f1, train_b, val_b
 
 
 
