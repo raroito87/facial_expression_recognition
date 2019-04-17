@@ -1,6 +1,6 @@
 import os
 import torch
-from models import CnnSimple, CnnDoubleLayer
+from models import CnnSimple, CnnDoubleLayer, CnnTripleLayer, CnnMulti5Layer, CnnMulti8Layer
 import torch.nn as nn
 from torch.optim import Adam
 
@@ -17,7 +17,7 @@ class ModelImporter:
 
     def load_nn_model(self, model_name):
         file_name = f'{model_name}.pt'
-        the_dict = torch.load(self.directory + file_name)
+        the_dict = torch.load(self.directory + file_name, map_location='cpu')
 
         print(the_dict['args'])
         #model = eval(the_dict['model_class'])(*the_dict['args'])

@@ -34,13 +34,19 @@ if not __name__ == '__main_':
 
     train_classifier = TrainClassifier2(model, X_df, y_df)
     t = time.time()
-    trained_model , optimizer, criterion, loss_hist, loss_val_hist, f1_val_hist = train_classifier.run_train(n_epochs = n_epochs, lr=learning_rate, batch_size=batch_size)
+    trained_model, optimizer, criterion, \
+    train_loss_hist, train_acc_hist, train_f1_hist, train_b_hist,\
+    val_loss_hist, val_acc_hist, val_f1_hist, val_b_hist = train_classifier.run_train(n_epochs=n_epochs,
+                                                                          lr=learning_rate,
+                                                                          batch_size=batch_size)
     print(f'trained in {time.time() - t} sec')
-    pre.save_results(loss_hist, loss_val_hist, f1_val_hist, f'{model_name}')
 
     if args.s_model:
         m_exporter = ModelExporter('fer2013_DatasetC')
         m_exporter.save_nn_model(trained_model, optimizer,trained_model.get_args())
+        m_exporter.save_results(f'{model_name}',
+                     train_loss_hist, train_acc_hist, train_f1_hist, train_b_hist,
+                     val_loss_hist, val_acc_hist, val_f1_hist, val_b_hist)
 
     if args.s_patterns:
         detected_patterns1 = trained_model.get_detected_patterns1()

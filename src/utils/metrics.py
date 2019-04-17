@@ -8,9 +8,6 @@ class Metrics:
         self.y_predict = y_predict
         self.labels = labels
 
-        #term added to the denominator to improve numerical stability. avoid dividing by zero
-        self.eps = 1e-6
-
     def confusion_matrix(self):
         return metrics.confusion_matrix(self.y_true, self.y_predict, self.labels)
 
