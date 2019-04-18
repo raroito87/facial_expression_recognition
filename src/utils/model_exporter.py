@@ -3,12 +3,11 @@ import torch
 import matplotlib.pyplot as plt
 
 class ModelExporter:
-    def __init__(self, name):
+    def __init__(self, name, root_dir=os.path.dirname(__file__)):
         self.name = name.lower()
         self.data = {}
 
-        root_dir = os.path.dirname(__file__)
-        directory_template = '{root_dir}/../../models/{name}/'
+        directory_template = f'{root_dir}/../../models/{name}/'
         self.directory = directory_template.format(root_dir=root_dir, name=name)
 
         if not os.path.exists(self.directory):
@@ -16,6 +15,9 @@ class ModelExporter:
             os.makedirs(self.directory)
 
     def save_nn_model(self, model, optimizer, args = [], debug=True):
+        if model.device is not 'cpu':
+            model.to('cpu')
+
         the_dict = model.state_dict()
         the_dict['model_class'] = type(model).__name__
         the_dict['optimizer_class']= type(optimizer).__name__

@@ -5,16 +5,15 @@ from sklearn import preprocessing
 import matplotlib.pyplot as plt
 
 class Preprocessing:
-    def __init__(self, name):
+    def __init__(self, name, root_dir=os.path.dirname(__file__)):
         self.name = name.lower()
         self.data = {}
 
-        root_dir = os.path.dirname(__file__)
-        directory_template = '{root_dir}/../../data/{name}/'
+        directory_template = f'{root_dir}/../../data/{name}/'
         self.directory = directory_template.format(root_dir=root_dir, name=name)
 
         if not os.path.exists(self.directory):
-            print(f'Creating "{name}" directory for you!')
+            print(f'Creating "{name}" directory')
             os.makedirs(self.directory)
 
     def load_data(self, filename, filetype='csv', *, name, **kwargs):

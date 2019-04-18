@@ -7,12 +7,11 @@ from torch.optim import Adam
 #todo
 #domehow the modul should also be saved and loaded so I dont have to ass here all model classes as import
 class ModelImporter:
-    def __init__(self, name):
+    def __init__(self, name, root_dir = os.path.dirname(__file__)):
         self.name = name.lower()
         self.data = {}
 
-        root_dir = os.path.dirname(__file__)
-        directory_template = '{root_dir}/../../models/{name}/'
+        directory_template = f'{root_dir}/../../models/{name}/'
         self.directory = directory_template.format(root_dir=root_dir, name=name)
 
     def load_nn_model(self, model_name):

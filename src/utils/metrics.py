@@ -3,17 +3,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class Metrics:
-    def __init__(self, y_true, y_predict, labels):
+    def __init__(self, y_true, y_predict, labels, labels_num):
         self.y_true = y_true
         self.y_predict = y_predict
         self.labels = labels
+        self.labels_num = labels_num
 
     def confusion_matrix(self):
-        return metrics.confusion_matrix(self.y_true, self.y_predict, self.labels)
+        cm = metrics.confusion_matrix(self.y_true, self.y_predict, self.labels_num)
+        return cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] # normalize
 
     def balanced_score(self):
         cm = self.confusion_matrix()
-        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] # normalize
         val = 0.0
         for i in range(cm.shape[0]):
             val += cm[i, i]
