@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class Metrics:
-    def __init__(self, y_true, y_predict, labels, labels_num):
+    def __init__(self, y_true, y_predict, labels_num, labels=None):
         self.y_true = y_true
         self.y_predict = y_predict
         self.labels = labels
@@ -22,6 +22,9 @@ class Metrics:
         return val/cm.shape[0]
 
     def represent_cm(self):
+        if self.labels is None:
+            return
+
         cm = self.confusion_matrix()
         # visualize normalized confusion Matrix
         np.set_printoptions(precision=2)

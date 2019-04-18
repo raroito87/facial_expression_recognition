@@ -7,7 +7,7 @@ import time
 import os
 
 if not __name__ == '__main_':
-    print('train cnn_triple_layer_balanced_sampling_D')
+    print('train cnn_multi8_layer_balanced_sampling_D')
 
     parser = argparse.ArgumentParser(description='fer2013')
     parser.add_argument('--s_model', default=True, help='save trained model')

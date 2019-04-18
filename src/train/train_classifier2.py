@@ -20,6 +20,7 @@ class TrainClassifier2():
         self.model_eval.to('cpu')
 
         self.labels = None
+        self.labels_num = None
         self.sampler = self._create_sampler(targets_train.values.astype(int))
 
         self.m_exporter = ModelExporter('temp', root_dir=root_dir)
