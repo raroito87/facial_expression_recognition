@@ -23,8 +23,8 @@ if not __name__ == '__main_':
     current_working_dir = os.getcwd()
     print('current_working_dir: ', current_working_dir)
     pre = Preprocessing('fer2013', root_dir=current_working_dir)
-    pre.load_data(filename='DatasetA.csv', name='train')
-    pre.load_data(filename='test_public_norm.csv', name='validate')
+    pre.load_data(filename='DatasetAA.csv', name='train')
+    pre.load_data(filename='test_public_norm_centered.csv', name='validate')
 
     X_train_df = pre.get(name='train').drop(columns=['emotion'])
     y_train_df = pre.get(name='train')['emotion']

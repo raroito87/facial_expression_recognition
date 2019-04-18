@@ -17,8 +17,8 @@ if not __name__ == '__main_':
 
     script_root_dir = os.path.dirname(__file__)
     pre = Preprocessing('fer2013', root_dir=script_root_dir)
-    pre.load_data(filename='train_reduced_norm.csv', name='train')
-    pre.load_data(filename='test_public_norm.csv', name='validate')
+    pre.load_data(filename='train_reduced_norm_centered.csv', name='train')
+    pre.load_data(filename='test_public_norm_centered.csv', name='validate')
 
     X_train_df = pre.get(name='train').drop(columns=['emotion'])
     y_train_df = pre.get(name='train')['emotion']

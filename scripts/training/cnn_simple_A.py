@@ -19,7 +19,7 @@ if not __name__ == '__main_':
     args=parser.parse_args()
 
     pre = Preprocessing('fer2013')
-    pre.load_data(filename='DatasetA.csv', name='train')
+    pre.load_data(filename='DatasetAA.csv', name='train')
 
     X_df = pre.get(name='train').drop(columns=['emotion'])
     y_df = pre.get(name='train')['emotion']
