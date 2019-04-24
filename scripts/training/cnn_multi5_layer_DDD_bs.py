@@ -7,7 +7,7 @@ import time
 import os
 
 if not __name__ == '__main_':
-    print('train cnn_multi5_layer_balanced_sampling_D')
+    print('train cnn_multi5_layer_balanced_sampling_DDD')
 
     parser = argparse.ArgumentParser(description='fer2013')
     parser.add_argument('--s_model', default=True, help='save trained model')
@@ -23,8 +23,8 @@ if not __name__ == '__main_':
     current_working_dir = os.getcwd()
     print('current_working_dir: ', current_working_dir)
     pre = Preprocessing('fer2013', root_dir=current_working_dir)
-    pre.load_data(filename='DatasetD.csv', name='train')
-    pre.load_data(filename='test_public_norm.csv', name='validate')
+    pre.load_data(filename='DatasetDDD.csv.gz', name='train')
+    pre.load_data(filename='test_public_std.csv.gz', name='validate')
 
     X_train_df = pre.get(name='train').drop(columns=['emotion'])
     y_train_df = pre.get(name='train')['emotion']
@@ -33,7 +33,7 @@ if not __name__ == '__main_':
 
     dtype = torch.float
 
-    model_name = f'cnn_multi5_layer_D_bs_{learning_rate}_{batch_size}_{n_epochs}_{n_classes}'
+    model_name = f'cnn_multi5_layer_DDD_bs_{learning_rate}_{batch_size}_{n_epochs}_{n_classes}'
     model = CnnMulti5Layer(model_name, d_out=n_classes)
     model.train()
 
@@ -47,7 +47,7 @@ if not __name__ == '__main_':
     print(f'trained in {time.time() - t} sec')
 
     if args.s_model:
-        m_exporter = ModelExporter('fer2013_datasetD', root_dir=current_working_dir)
+        m_exporter = ModelExporter('fer2013_datasetDDD', root_dir=current_working_dir)
         m_exporter.save_nn_model(trained_model, optimizer,trained_model.get_args())
         m_exporter.save_results(f'{model_name}',
                      train_loss_hist, train_acc_hist, train_f1_hist, train_b_hist,

@@ -3,7 +3,7 @@ from utils import Preprocessing
 
 class ImageImporter:
 
-    def __init__(self, name, data = 'fer2013_DatasetA', file = 'train.csv', ):
+    def __init__(self, name, data = 'fer2013', file = 'train.csv', ):
         self.name = name.lower()
         self.image = {}
 

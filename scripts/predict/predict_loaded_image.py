@@ -1,9 +1,10 @@
 import cv2
 import torch
 import os
-from image_utils import ImageCapture, ImageConverter
+from image_utils import ImageConverter
 from utils import ModelImporter
 import numpy as np
+import argparse
 
 #https://github.com/MTG/sms-tools/issues/36
 from sys import platform as sys_pf
@@ -11,14 +12,20 @@ if sys_pf == 'darwin':
     import matplotlib
     matplotlib.use("TkAgg")
 
-from matplotlib import pyplot as plt
+root_dir = os.path.dirname(__file__)
+data_path = '{root_dir}/../../data/images_to_predict/'
+data_directory = data_path.format(root_dir=root_dir, name='data')
 
 emotion_dict = {0:'Angry', 1:'Disgust', 2:'Fear', 3:'Happy', 4:'Sad', 5:'Surprise', 6:'Neutral'}
 
 if not __name__ == '__main_':
+    parser = argparse.ArgumentParser(description='fer2013')
+    parser.add_argument('--img_name', default='0.png', help='save trained model')
+    args = parser.parse_args()
 
-    cap_img = ImageCapture()
-    frame = cap_img.capture_image()
+    file = f'{data_directory}{args.img_name}'
+    print(file)
+    frame = cv2.imread(file, 0)
 
     if frame is not None:
         im_conv = ImageConverter()
@@ -61,4 +68,5 @@ if not __name__ == '__main_':
         #https://stackoverflow.com/questions/31350240/python-opencv-open-window-on-top-of-other-applications/44852940
         os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "python" to true' ''')
         cv2.waitKey(0)
+        # 0=Angry, 1=Disgust, 2=Fear, 3=Happy, 4=Sad, 5=Surprise, 6=Neutral
 

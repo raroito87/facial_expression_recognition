@@ -16,7 +16,8 @@ class ImageConverter:
         return frame[y1:y2, x1:x2].copy()
 
     def convert_frame_to_grey_scale(self, frame):
-        if frame.shape[2] == 1:  # frame is already greyscale, only one channel
+        print(len(frame.shape))
+        if len(frame.shape) == 2:  # frame is already greyscale, only one channel
             return frame
 
         return cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -29,6 +30,9 @@ class ImageConverter:
 
     def reshape_array_to_frame(self, array):
         return array.reshape(48, 48)
+
+    def normalize_frame(self, frame):
+        return np.divide(frame, 255.0)
 
     def flip_frame_horitzontally(self, frame):
         return cv2.flip(frame, 1)
