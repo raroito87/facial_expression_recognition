@@ -27,8 +27,8 @@ class TrainClassifier2():
         self.model_name = copy.deepcopy(self.model.name)
 
         # Generators
-        self.training_set = Fer2013Dataset(inputs=inputs_train, targets=targets_train, device='cpu')
-        self.validation_set = Fer2013Dataset(inputs=inputs_val, targets=targets_val, device='cpu')
+        self.training_set = Fer2013Dataset(inputs=inputs_train.values, targets=targets_train, device='cpu')
+        self.validation_set = Fer2013Dataset(inputs=inputs_val.values, targets=targets_val, device='cpu')
 
         #https://stanford.edu/~shervine/blog/pytorch-how-to-generate-data-parallel
         self.use_cuda = torch.cuda.is_available()

@@ -18,6 +18,7 @@ class Fer2013Dataset(Dataset):
                 self.x_data [i] = data_grey[i].unsqueeze(0).repeat(3, 1)
             self.x_data  = self.x_data .reshape(data_grey.shape[0], 3, 224, 224)
         else:
+            self.x_data =  torch.tensor(inputs, device=device, dtype=dtype)
             self.x_data = self.x_data.reshape(self.x_data.shape[0], 1, self.size_im[0], self.size_im[1])
 
         self.y_data = torch.tensor(targets,device=device, dtype=torch.long).squeeze()
