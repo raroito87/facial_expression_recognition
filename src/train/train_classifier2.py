@@ -2,7 +2,7 @@ import torch
 import copy
 from utils import ModelExporter
 from sklearn import metrics
-from data import Fer2013Dataset
+from dataset import Fer2013Dataset
 from torch.utils.data import WeightedRandomSampler, DataLoader
 import numpy as np
 #import resource
