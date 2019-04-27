@@ -1,6 +1,6 @@
 import os
 import torch
-from models import CnnSimple, CnnDoubleLayer, CnnTripleLayer, CnnMulti5Layer, CnnMulti8Layer
+from models import CnnSimple, CnnDoubleLayer, CnnTripleLayer, CnnMulti5Layer, CnnMulti8Layer, CnnVGG16Pretrained
 import torch.nn as nn
 from torch.optim import Adam
 

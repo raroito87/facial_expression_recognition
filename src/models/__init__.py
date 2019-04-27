@@ -4,5 +4,6 @@ from .cnn_triple_layer import CnnTripleLayer
 from .cnn_multi5_layer import CnnMulti5Layer
 from .cnn_multi8_layer import CnnMulti8Layer
 from .ann_encoder import AnnAutoencoder
+from .cnn_VGG16_pretrained import CnnVGG16Pretrained
 
-__all__ = ['CnnSimple', 'AnnAutoencoder', 'CnnDoubleLayer', 'CnnTripleLayer', 'CnnMulti5Layer', 'CnnMulti8Layer']
+__all__ = ['CnnSimple', 'AnnAutoencoder', 'CnnDoubleLayer', 'CnnTripleLayer', 'CnnMulti5Layer', 'CnnMulti8Layer','CnnVGG16Pretrained']

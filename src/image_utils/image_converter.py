@@ -25,6 +25,9 @@ class ImageConverter:
     def rescale(self, frame, size = 48):
         return cv2.resize(frame,(size,size), interpolation = cv2.INTER_AREA)
 
+    def upscale(self, frame, size = 224):
+        return cv2.resize(frame,(size,size), interpolation = cv2.INTER_CUBIC)
+
     def reshape_frame_to_array(self, frame):
         return frame.reshape(1, 48*48)
 
