@@ -36,9 +36,12 @@ if not __name__ == '__main_':
     cv2.namedWindow(windowName, cv2.WND_PROP_FULLSCREEN)
     cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
+    b = [0, 20, 30, 40]
     while True:
         print('.', end='', flush=True)
         ret, frame = cam.read()
+        s = frame.shape
+        cv2.rectangle(frame, (int(s[1]/4), 0), (int(3*s[1]/4), int(s[0])), (0, 0, 255), 2)
         cv2.imshow(windowName, frame)
         os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "python" to true' ''')
 
