@@ -107,4 +107,5 @@ venv.bak/
 data/
 .idea/
 .DS_STORE
-models/
+models/fer*
+models/temp
