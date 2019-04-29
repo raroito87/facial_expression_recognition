@@ -54,9 +54,12 @@ if not __name__ == '__main_':
             predicted_emotion = emotion_dict[idx1[0][0]]
             predicted_emotion2 = emotion_dict[idx2[0][0]]
 
-        prediction = f'today your face radiates {predicted_emotion}....and a bit of {predicted_emotion2}'
-        print(prediction)
-        cv2.imshow(prediction, cv2.resize(img_48,(int(288),int(288)), interpolation=cv2.INTER_CUBIC))
+        frame = im_conv.upscale(temp_img, size=400)
+        cv2.putText(frame, 'your face gives me', (5, 100), cv2.FONT_HERSHEY_SIMPLEX, 1.0, 255, 2)
+        cv2.putText(frame, predicted_emotion, (130, 200), cv2.FONT_HERSHEY_SIMPLEX, 2.5, 255, 6)
+        cv2.putText(frame, '...and a bit of', (5, 270), cv2.FONT_HERSHEY_SIMPLEX, 1.0, 255, 2)
+        cv2.putText(frame, predicted_emotion2, (130, 350), cv2.FONT_HERSHEY_SIMPLEX, 1.5, 255, 4)
+        cv2.imshow('result', frame)
         #https://stackoverflow.com/questions/31350240/python-opencv-open-window-on-top-of-other-applications/44852940
         os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "python" to true' ''')
         cv2.waitKey(0)
