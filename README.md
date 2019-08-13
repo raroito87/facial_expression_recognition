@@ -44,12 +44,12 @@ source activate my_voice_predictor
 ```sh
 conda env update --file environment.yml
 conda activate facial_expression_recognition
-run script: scripts/predict/predict_captured_image.py # Webcam video is displayed. The face should centered in the red rectangle. Fill the rectangle as much as possible (the face should be as big as posible in the image). Press 'Space'.
+python scripts/predict/predict_captured_image.py # Webcam video is displayed. The face should centered in the red rectangle. Fill the rectangle as much as possible (the face should be as big as posible in the image). Press 'Space'.
 ```
 
 ## Todo
 
 This is a working version with a quite nice accuracy (would be Top5 in the Klaggle compettition) but it still an be improved.
 things to be done still:
-- Pretrained CNN
+- use a pretrained CNN
 - increase the resolution on training images using an upscaler.
