@@ -18,8 +18,6 @@ def _save_image(img, filename):
     file = f'{data_directory}{filename}'
     cv2.imwrite(file, img)
 
-
-
 class TestImageConverter(unittest.TestCase):
 
     def test_rotate_image(self):

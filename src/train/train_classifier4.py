@@ -10,10 +10,10 @@ from utils import Metrics
 import os
 import gc
 
-## NOT USED YET
-
-class TrainClassifier3():
-    def __init__(self, model, inputs_train, targets_train, inputs_val, targets_val, to_rgb=False, root_dir = os.path.dirname(__name__)):
+#TrainClassifier4 is like 2 but 0 workers, to use in Windows OS
+#https://pytorch.org/docs/stable/notes/windows.html#multiprocessing-error-without-if-clause-protection
+class TrainClassifier4():
+    def __init__(self, model, inputs_train, targets_train, inputs_val, targets_val, root_dir = os.path.dirname(__name__)):
         #inputs and target are DF
         self.model = model
 
@@ -29,16 +29,13 @@ class TrainClassifier3():
         self.model_name = copy.deepcopy(self.model.name)
 
         # Generators
-        self.training_set = Fer2013Dataset(inputs=inputs_train, targets=targets_train, to_rgb=to_rgb, device='cpu')
-        self.validation_set = Fer2013Dataset(inputs=inputs_val, targets=targets_val, to_rgb=to_rgb, device='cpu')
+        self.training_set = Fer2013Dataset(inputs=inputs_train.values, targets=targets_train, device='cpu')
+        self.validation_set = Fer2013Dataset(inputs=inputs_val.values, targets=targets_val, device='cpu')
 
         #https://stanford.edu/~shervine/blog/pytorch-how-to-generate-data-parallel
         self.use_cuda = torch.cuda.is_available()
         self.device = torch.device("cuda:0" if self.use_cuda else "cpu")
         torch.backends.cudnn.benchmark = True#if inputs sizes remain the same, should go faster
-        if self.use_cuda:
-            print('empty cuda cache')
-            torch.cuda.empty_cache()
 
         self.model.to(self.device)
 
@@ -47,7 +44,7 @@ class TrainClassifier3():
     def run_train(self, n_epochs, lr=0.001, batch_size=256):
         print(f'training model: {self.model.name}')
 
-        training_generator = DataLoader(self.training_set, sampler=self.sampler,  batch_size =batch_size, num_workers=2)
+        training_generator = DataLoader(self.training_set, sampler=self.sampler,  batch_size =batch_size, num_workers=0)
 
         self.model.train()#set model to training mode
         # Loss and optimizer
@@ -69,7 +66,7 @@ class TrainClassifier3():
 
         model_versions = {}
 
-        f = 1
+        f = 5
         for t in range(n_epochs):
             for i, (batch_x, batch_y) in enumerate(training_generator):
 
@@ -95,48 +92,45 @@ class TrainClassifier3():
                     print('.', end='', flush=True)
 
             if t % f == 0:
-                print('\nsave model now')
                 model_params = copy.deepcopy(self.model.state_dict())
-                #model_versions[t] = model_params
+                model_versions[t] = model_params
 
-                #train_loss, train_acc, train_f1, val_loss,\
-                #val_acc, val_f1, train_b, val_b = self._evaluate(model_params, criterion)
+                train_loss, train_acc, train_f1, val_loss,\
+                val_acc, val_f1, train_b, val_b = self._evaluate(model_params, criterion)
 
                 self.model_eval.name = f'{self.model_name}_epoch{t}'
                 self.m_exporter.save_nn_model(self.model_eval, optimizer, self.model.get_args(), debug=False)
 
-                #train_loss_hist.append(train_loss)
-                #train_acc_hist.append(train_acc)
-                #train_f1_hist.append(train_f1)
-                #train_b_hist.append(train_b)
-#
-                #val_loss_hist.append(val_loss)
-                #val_acc_hist.append(val_acc)
-                #val_f1_hist.append(val_f1)
-                #val_b_hist.append(val_b)
+                train_loss_hist.append(train_loss)
+                train_acc_hist.append(train_acc)
+                train_f1_hist.append(train_f1)
+                train_b_hist.append(train_b)
 
-                #print('\n{} loss t: {:0.3f} v: {:0.3f} | acc t: {:0.3f} v: {:0.3f} |'
-                #      ' f1 t: {:0.3f} v: {:0.3f} | b t: {:0.3f} v: {:0.3f}'.format(t,
-                #      train_loss, val_loss, train_acc, val_acc, train_f1, val_f1, train_b, val_b))
+                val_loss_hist.append(val_loss)
+                val_acc_hist.append(val_acc)
+                val_f1_hist.append(val_f1)
+                val_b_hist.append(val_b)
 
-        #print(f'\n ####training finished####')
-        #best_iteration_loss = f*val_loss_hist.index(min(val_loss_hist))
-        #print(f'optimal iteration val_loss: {best_iteration_loss}')
-        #best_iteration_acc = f * val_acc_hist.index(max(val_acc_hist))
-        #print(f'optimal iteration val_acc: {best_iteration_acc}')
-        #best_iteration_f1 = f * val_f1_hist.index(max(val_f1_hist))
-        #print(f'optimal iteration val_f1: {best_iteration_f1}')
-        #best_iteration_b = f * val_b_hist.index(max(val_b_hist))
-        #print(f'optimal iteration val_balanced_score: {best_iteration_b}')
+                print('\n{} loss t: {:0.3f} v: {:0.3f} | acc t: {:0.3f} v: {:0.3f} |'
+                      ' f1 t: {:0.3f} v: {:0.3f} | b t: {:0.3f} v: {:0.3f}'.format(t,
+                      train_loss, val_loss, train_acc, val_acc, train_f1, val_f1, train_b, val_b))
 
-        best_iteration_acc = 2
+        print(f'\n ####training finished####')
+        best_iteration_loss = f*val_loss_hist.index(min(val_loss_hist))
+        print(f'optimal iteration val_loss: {best_iteration_loss}')
+        best_iteration_acc = f * val_acc_hist.index(max(val_acc_hist))
+        print(f'optimal iteration val_acc: {best_iteration_acc}')
+        best_iteration_f1 = f * val_f1_hist.index(max(val_f1_hist))
+        print(f'optimal iteration val_f1: {best_iteration_f1}')
+        best_iteration_b = f * val_b_hist.index(max(val_b_hist))
+        print(f'optimal iteration val_balanced_score: {best_iteration_b}')
 
         # use the best trained model
-        #self.model.load_state_dict(state_dict=copy.deepcopy(model_versions[best_iteration_acc]))
-        #self.model.eval()# set model to test model
-        #self.model.name = f'{self.model_name}'
+        self.model.load_state_dict(state_dict=copy.deepcopy(model_versions[best_iteration_acc]))
+        self.model.eval()# set model to test model
+        self.model.name = f'{self.model_name}'
 
-        #del model_versions
+        del model_versions
 
         return self.model, optimizer, criterion,\
                train_loss_hist, train_acc_hist, train_f1_hist, train_b_hist,\

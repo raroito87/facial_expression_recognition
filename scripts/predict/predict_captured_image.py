@@ -20,7 +20,8 @@ if not __name__ == '__main_':
     cam = cv2.VideoCapture(0)
 
     # this line will place the webcam view on the desktop if uncommented
-    # os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "python" to true' ''')  # To make window active
+    # os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "python" to true' ''')
+    # To make window active
 
     print('press SCAPE to take a picture')
 
@@ -43,7 +44,7 @@ if not __name__ == '__main_':
         s = frame.shape
         cv2.rectangle(frame, (int(s[1]/4), 0), (int(3*s[1]/4), int(s[0])), (0, 0, 255), 2)
         cv2.imshow(windowName, frame)
-        os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "python" to true' ''')
+        # os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "python" to true' ''')
 
         #if not ret:
         #    break

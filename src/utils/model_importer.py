@@ -5,7 +5,7 @@ import torch.nn as nn
 from torch.optim import Adam
 
 #todo
-#domehow the modul should also be saved and loaded so I dont have to ass here all model classes as import
+#somehow the modul should also be saved and loaded so I dont have to ass here all model classes as import
 class ModelImporter:
     def __init__(self, name, root_dir = os.path.dirname(__file__)):
         self.name = name.lower()
