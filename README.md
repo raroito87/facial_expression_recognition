@@ -1,11 +1,11 @@
 # facial_expression_recognition
 This project has been carried out as the final project of the Machine Learning bootcamp at neuefische GmbH (https://www.neuefische.de/weiterbildung/data-science)
-The purpose of it is to apply the concepts learnt along the course through a personal project of our own choice.
+The purpose of this project is to apply the concepts learnt along the course implementing a personal project of our own choice.
 
 # Description
-The project takes a data set provided by Kaggle: https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/
+The project uses a dataset provided by Kaggle: https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/
 
-The goal is to determine anyone's emotional state by taking a picture (using the laptop's Webcam for example). This will be achieve by building an image classification system in which face pictures are analyzed and categorized accoring to their facial expression.
+The goal is to determine anyone's emotional state by taking a picture (using the laptop's Webcam for example). This will be achieved by building an image classification system in which face pictures are analyzed and categorized accoring to their facial expression.
 
 # Motivation
 
